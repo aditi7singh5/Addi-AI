@@ -35,7 +35,17 @@ public class QuestionService {
                 "Describe a scenario where you had to work with a teammate who had a very different working style than yours.",
                 "Emphasize communication, compromise, and focus on the project's success.",
                 "My partner preferred working nights while I worked mornings. We aligned by scheduling daily check-ins at 5 PM to sync our branches and progress.",
-                Arrays.asList("communication", "alignment", "compromise", "collaboration", "understand", "listen", "respect"))
+                Arrays.asList("communication", "alignment", "compromise", "collaboration", "understand", "listen", "respect")),
+            new Question("swe_beh_jr_4",
+                "Describe a time you failed to meet a deadline. How did you handle it and what did you learn?",
+                "Be honest, take accountability, and focus on how you communicate delays and adjust next steps.",
+                "I underestimated a task's scope. I communicated the delay to my lead 2 days early, worked extra hours to mitigate, and now use split task estimates.",
+                Arrays.asList("deadline", "delay", "accountability", "planning", "mitigation")),
+            new Question("swe_beh_jr_5",
+                "Why do you want to join our engineering team? What interests you about our technical architecture?",
+                "Show that you researched the team's stack (Spring Boot, dynamic UI) and align with our engineering guidelines.",
+                "I want to work with Spring Boot backend services because of their scalability, and I'm eager to learn about real-world REST API design.",
+                Arrays.asList("architecture", "stack", "Spring Boot", "learn", "scale"))
         ));
         sweBeh.put("mid", Arrays.asList(
             new Question("swe_beh_mid_1",
@@ -52,7 +62,17 @@ public class QuestionService {
                 "How do you balance technical debt against the pressure to deliver new features rapidly?",
                 "Discuss trade-offs, making tech debt visible, and negotiation with product managers.",
                 "I log tech debt in our backlog. During sprint planning, I negotiate with the PM to allocate 10-15% of velocity to refactoring high-impact areas, preventing our velocity from dropping.",
-                Arrays.asList("tech debt", "trade-off", "refactor", "refinement", "negotiation", "impact", "documentation", "velocity"))
+                Arrays.asList("tech debt", "trade-off", "refactor", "refinement", "negotiation", "impact", "documentation", "velocity")),
+            new Question("swe_beh_mid_4",
+                "Describe a time you had to onboard a new team member or explain a complex codebase to a peer.",
+                "Highlight documentation, pair programming, starting with high-level architecture, and patience.",
+                "I created a README checklist, walked them through our architecture diagram, and paired for 1 hour daily on small bugs to help them build confidence.",
+                Arrays.asList("onboard", "documentation", "architecture", "mentor", "pair programming")),
+            new Question("swe_beh_mid_5",
+                "How do you handle scope creep when a product manager requests extra features in the middle of a sprint?",
+                "Discuss negotiation, impact analysis, documenting changes, and swapping sprint tasks to maintain velocity.",
+                "I evaluate the effort. If critical, I discuss swapping a task of equal weight out of the current sprint with the PM to protect our velocity.",
+                Arrays.asList("scope creep", "sprint", "negotiation", "velocity", "backlog", "swap"))
         ));
         sweBeh.put("senior", Arrays.asList(
             new Question("swe_beh_sr_1",
@@ -90,7 +110,17 @@ public class QuestionService {
                 "What are the core concepts of Object-Oriented Programming (OOP), and why are they useful?",
                 "Mention Encapsulation, Inheritance, Polymorphism, and Abstraction with real-world analogies.",
                 "OOP relies on Encapsulation (hiding state), Abstraction (hiding implementation details), Inheritance (reusing code), and Polymorphism (different behavior via shared interfaces).",
-                Arrays.asList("encapsulation", "inheritance", "polymorphism", "abstraction", "reuse", "class", "interface", "modifiers"))
+                Arrays.asList("encapsulation", "inheritance", "polymorphism", "abstraction", "reuse", "class", "interface", "modifiers")),
+            new Question("swe_tech_jr_4",
+                "Explain what REST APIs are and list the primary HTTP methods and their usage.",
+                "Define REST principles, HTTP methods (GET, POST, PUT, DELETE), and status codes.",
+                "REST is an architectural style using stateless HTTP protocols. GET retrieves data, POST creates, PUT updates, and DELETE removes resources.",
+                Arrays.asList("REST", "HTTP", "GET", "POST", "PUT", "DELETE", "endpoints")),
+            new Question("swe_tech_jr_5",
+                "What is the difference between a SQL and NoSQL database? When would you prefer NoSQL?",
+                "Compare tabular structured relational databases with schema-less document databases, addressing consistency and horizontal scaling.",
+                "SQL is relational with a strict schema and ACID compliance. NoSQL is document-based, schema-less, and scales horizontally, ideal for unstructured logs.",
+                Arrays.asList("relational", "schema", "NoSQL", "document", "horizontal scaling", "ACID"))
         ));
         sweTech.put("mid", Arrays.asList(
             new Question("swe_tech_mid_1",
@@ -107,7 +137,17 @@ public class QuestionService {
                 "What is dependency injection, and how does it improve software testability and maintainability?",
                 "Discuss decoupling, unit testing with mocks, dependency inversion, and application configuration flexibility.",
                 "Dependency Injection passes dependent objects into a class rather than having the class instantiate them, decoupling classes and allowing easy mocking in unit testing.",
-                Arrays.asList("decoupling", "unit test", "mocking", "inversion of control", "IoC", "dependency injection", "interface", "flexible"))
+                Arrays.asList("decoupling", "unit test", "mocking", "inversion of control", "IoC", "dependency injection", "interface", "flexible")),
+            new Question("swe_tech_mid_4",
+                "What is a Connection Pool in database connectivity? Why is it useful, and what happens if it runs out of connections?",
+                "Discuss connection reuse, overhead of establishing TCP connections, and pool exhaustion timeouts.",
+                "A connection pool keeps database connections open to reuse them, avoiding TCP handshakes. If exhausted, requests block until a connection is returned or times out.",
+                Arrays.asList("connection pool", "reuse", "overhead", "exhaustion", "timeout", "HikariCP")),
+            new Question("swe_tech_mid_5",
+                "Explain the concept of MVC (Model-View-Controller) architecture. How is it implemented in Spring Boot?",
+                "Map database entities (Model), static resources/templates (View), and REST endpoints/controllers (Controller).",
+                "MVC separates business logic (Model), user interface (View), and input handler (Controller). In Spring Boot, DispatcherServlet routes requests to Controller beans.",
+                Arrays.asList("MVC", "controller", "model", "view", "Spring Boot", "DispatcherServlet"))
         ));
         sweTech.put("senior", Arrays.asList(
             new Question("swe_tech_sr_1",

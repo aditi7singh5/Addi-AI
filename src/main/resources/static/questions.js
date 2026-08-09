@@ -17,6 +17,27 @@ const QUESTION_BANK = {
           "hint": "Walk through your logical debugging steps, tools used, and what you learned.",
           "keywords": ["debug", "diagnose", "logs", "breakpoint", "solve"],
           "sampleAnswer": "I faced a memory leak in a Node script. I used memory profiling tools, inspected garbage collection logs, found a listener that wasn't removed, and cleaned it up."
+        },
+        {
+          "id": "swe_beh_jr_3",
+          "question": "Describe a scenario where you had to work with a teammate who had a very different working style than yours.",
+          "hint": "Emphasize communication, compromise, and focus on the project's success.",
+          "keywords": ["communication", "alignment", "compromise", "collaboration", "understand", "listen", "respect"],
+          "sampleAnswer": "My partner preferred working nights while I worked mornings. We aligned by scheduling daily check-ins at 5 PM to sync our branches and progress."
+        },
+        {
+          "id": "swe_beh_jr_4",
+          "question": "Describe a time you failed to meet a deadline. How did you handle it and what did you learn?",
+          "hint": "Be honest, take accountability, and focus on how you communicate delays and adjust next steps.",
+          "keywords": ["deadline", "delay", "accountability", "planning", "mitigation"],
+          "sampleAnswer": "I underestimated a task's scope. I communicated the delay to my lead 2 days early, worked extra hours to mitigate, and now use split task estimates."
+        },
+        {
+          "id": "swe_beh_jr_5",
+          "question": "Why do you want to join our engineering team? What interests you about our technical architecture?",
+          "hint": "Show that you researched the team's stack (Spring Boot, dynamic UI) and align with our engineering guidelines.",
+          "keywords": ["architecture", "stack", "Spring Boot", "learn", "scale"],
+          "sampleAnswer": "I want to work with Spring Boot backend services because of their scalability, and I'm eager to learn about real-world REST API design."
         }
       ],
       "mid": [
@@ -33,6 +54,27 @@ const QUESTION_BANK = {
           "hint": "Highlight your learning methodology, prioritization, and delivery success.",
           "keywords": ["learning", "methodology", "prioritization", "deadline", "delivery"],
           "sampleAnswer": "I had to learn Go in two weeks for a microservice migration. I built prototype endpoints, paired with senior peers, focused on idiomatic patterns, and shipped the service on time."
+        },
+        {
+          "id": "swe_beh_mid_3",
+          "question": "How do you balance technical debt against the pressure to deliver new features rapidly?",
+          "hint": "Discuss trade-offs, making tech debt visible, and negotiation with product managers.",
+          "keywords": ["tech debt", "trade-off", "refactor", "refinement", "negotiation", "impact", "documentation", "velocity"],
+          "sampleAnswer": "I log tech debt in our backlog. During sprint planning, I negotiate with the PM to allocate 10-15% of velocity to refactoring high-impact areas, preventing our velocity from dropping."
+        },
+        {
+          "id": "swe_beh_mid_4",
+          "question": "Describe a time you had to onboard a new team member or explain a complex codebase to a peer.",
+          "hint": "Highlight documentation, pair programming, starting with high-level architecture, and patience.",
+          "keywords": ["onboard", "documentation", "architecture", "mentor", "pair programming"],
+          "sampleAnswer": "I created a README checklist, walked them through our architecture diagram, and paired for 1 hour daily on small bugs to help them build confidence."
+        },
+        {
+          "id": "swe_beh_mid_5",
+          "question": "How do you handle scope creep when a product manager requests extra features in the middle of a sprint?",
+          "hint": "Discuss negotiation, impact analysis, documenting changes, and swapping sprint tasks to maintain velocity.",
+          "keywords": ["scope creep", "sprint", "negotiation", "velocity", "backlog", "swap"],
+          "sampleAnswer": "I evaluate the effort. If critical, I discuss swapping a task of equal weight out of the current sprint with the PM to protect our velocity."
         }
       ],
       "senior": [
@@ -53,6 +95,34 @@ const QUESTION_BANK = {
           "hint": "Mention memory address spaces, resource overhead, and communication complexity.",
           "keywords": ["process", "thread", "address space", "memory", "overhead", "ipc"],
           "sampleAnswer": "A process has its own address space and overhead, communicating via IPC. A thread shares memory with its parent process, is lightweight, and communicates directly."
+        },
+        {
+          "id": "swe_tech_jr_2",
+          "question": "What is the event loop in JavaScript, and how does it handle asynchronous execution?",
+          "hint": "Describe the call stack, callback queue, microtask queue (Promises), and the rendering pipeline.",
+          "keywords": ["call stack", "callback queue", "microtask", "promise", "blocking", "single-threaded", "non-blocking", "event loop"],
+          "sampleAnswer": "JavaScript is single-threaded. The event loop monitors the call stack and callback queue. When the stack is empty, it pushes asynchronous callbacks to the stack to be executed."
+        },
+        {
+          "id": "swe_tech_jr_3",
+          "question": "What are the core concepts of Object-Oriented Programming (OOP), and why are they useful?",
+          "hint": "Mention Encapsulation, Inheritance, Polymorphism, and Abstraction with real-world analogies.",
+          "keywords": ["encapsulation", "inheritance", "polymorphism", "abstraction", "reuse", "class", "interface", "modifiers"],
+          "sampleAnswer": "OOP relies on Encapsulation (hiding state), Abstraction (hiding implementation details), Inheritance (reusing code), and Polymorphism (different behavior via shared interfaces)."
+        },
+        {
+          "id": "swe_tech_jr_4",
+          "question": "Explain what REST APIs are and list the primary HTTP methods and their usage.",
+          "hint": "Define REST principles, HTTP methods (GET, POST, PUT, DELETE), and status codes.",
+          "keywords": ["REST", "HTTP", "GET", "POST", "PUT", "DELETE", "endpoints"],
+          "sampleAnswer": "REST is an architectural style using stateless HTTP protocols. GET retrieves data, POST creates, PUT updates, and DELETE removes resources."
+        },
+        {
+          "id": "swe_tech_jr_5",
+          "question": "What is the difference between a SQL and NoSQL database? When would you prefer NoSQL?",
+          "hint": "Compare tabular structured relational databases with schema-less document databases, addressing consistency and horizontal scaling.",
+          "keywords": ["relational", "schema", "NoSQL", "document", "horizontal scaling", "ACID"],
+          "sampleAnswer": "SQL is relational with a strict schema and ACID compliance. NoSQL is document-based, schema-less, and scales horizontally, ideal for unstructured logs."
         }
       ],
       "mid": [
@@ -62,6 +132,34 @@ const QUESTION_BANK = {
           "hint": "Mention B-Trees, search speedups, and write performance impacts.",
           "keywords": ["indexes", "B-tree", "lookup", "write performance", "overhead", "reads"],
           "sampleAnswer": "Indexes speed up read lookups by creating a B-Tree structure. However, they add overhead to writes (inserts, updates, deletes) because index nodes must rebalance."
+        },
+        {
+          "id": "swe_tech_mid_2",
+          "question": "Explain the difference between optimistic and pessimistic locking in databases, and when you would use each.",
+          "hint": "Address write conflicts, transaction throughput, version numbers, lock duration, and deadlock risk.",
+          "keywords": ["versioning", "conflict", "throughput", "concurrency", "lock", "deadlock", "isolation level", "optimistic", "pessimistic"],
+          "sampleAnswer": "Optimistic locking assumes conflicts are rare, using a version field; it checks for changes before committing. Pessimistic locking locks the rows immediately (SELECT FOR UPDATE)."
+        },
+        {
+          "id": "swe_tech_mid_3",
+          "question": "What is dependency injection, and how does it improve software testability and maintainability?",
+          "hint": "Discuss decoupling, unit testing with mocks, dependency inversion, and application configuration flexibility.",
+          "keywords": ["decoupling", "unit test", "mocking", "inversion of control", "IoC", "dependency injection", "interface", "flexible"],
+          "sampleAnswer": "Dependency Injection passes dependent objects into a class rather than having the class instantiate them, decoupling classes and allowing easy mocking in unit testing."
+        },
+        {
+          "id": "swe_tech_mid_4",
+          "question": "What is a Connection Pool in database connectivity? Why is it useful, and what happens if it runs out of connections?",
+          "hint": "Discuss connection reuse, overhead of establishing TCP connections, and pool exhaustion timeouts.",
+          "keywords": ["connection pool", "reuse", "overhead", "exhaustion", "timeout", "HikariCP"],
+          "sampleAnswer": "A connection pool keeps database connections open to reuse them, avoiding TCP handshakes. If exhausted, requests block until a connection is returned or times out."
+        },
+        {
+          "id": "swe_tech_mid_5",
+          "question": "Explain the concept of MVC (Model-View-Controller) architecture. How is it implemented in Spring Boot?",
+          "hint": "Map database entities (Model), static resources/templates (View), and REST endpoints/controllers (Controller).",
+          "keywords": ["MVC", "controller", "model", "view", "Spring Boot", "DispatcherServlet"],
+          "sampleAnswer": "MVC separates business logic (Model), user interface (View), and input handler (Controller). In Spring Boot, DispatcherServlet routes requests to Controller beans."
         }
       ],
       "senior": [

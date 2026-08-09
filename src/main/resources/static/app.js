@@ -286,6 +286,7 @@ function loadQuestion(index) {
   
   document.getElementById('text-response').value = '';
   document.getElementById('transcript-preview').innerText = 'Your spoken response will appear here...';
+  finalTranscript = '';
   
   const progressPercent = Math.round((index / state.currentSession.questions.length) * 100);
   document.getElementById('progress-bar-fill').style.width = `${progressPercent}%`;

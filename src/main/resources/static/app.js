@@ -3,6 +3,16 @@
 let recognition = null;
 let finalTranscript = '';
 
+// Pre-trigger voices load for Chrome/Safari compatibility
+if (typeof window !== 'undefined' && window.speechSynthesis) {
+  window.speechSynthesis.getVoices();
+  if (window.speechSynthesis.onvoiceschanged !== undefined) {
+    window.speechSynthesis.onvoiceschanged = () => {
+      window.speechSynthesis.getVoices();
+    };
+  }
+}
+
 let state = {
   activeScreen: 'landing-screen',
   selectedRole: 'software-engineer',

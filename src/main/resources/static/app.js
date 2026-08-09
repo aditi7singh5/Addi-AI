@@ -282,7 +282,7 @@ function loadQuestion(index) {
   
   document.getElementById('q-title').innerText = `Question ${index + 1} of ${state.currentSession.questions.length}`;
   document.getElementById('q-body').innerText = question.question;
-  document.getElementById('q-hint-text').innerText = question.hint;
+  document.getElementById('q-hint-content').innerText = question.hint;
   
   document.getElementById('q-hint-content').classList.remove('show');
   document.getElementById('hint-chevron').className = 'fas fa-chevron-down';

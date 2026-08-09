@@ -142,6 +142,7 @@ function initSetupOptions() {
       roleCards.forEach(c => c.classList.remove('selected'));
       card.classList.add('selected');
       state.selectedRole = card.getAttribute('data-value');
+      updateQuestionSliderCap();
     });
   });
 
@@ -151,8 +152,17 @@ function initSetupOptions() {
       diffCards.forEach(c => c.classList.remove('selected'));
       card.classList.add('selected');
       state.selectedDifficulty = card.getAttribute('data-value');
+      updateQuestionSliderCap();
     });
   });
+
+  const typeSelect = document.getElementById('interview-type-select');
+  if (typeSelect) {
+    typeSelect.addEventListener('change', (e) => {
+      state.selectedType = e.target.value;
+      updateQuestionSliderCap();
+    });
+  }
 
   const qSlider = document.getElementById('question-limit-slider');
   const qVal = document.getElementById('question-limit-val');
@@ -162,6 +172,9 @@ function initSetupOptions() {
       qVal.innerText = state.questionLimit;
     });
   }
+  
+  // Initialize slider limits for default selected configurations
+  setTimeout(updateQuestionSliderCap, 200);
 }
 
 // Start Interview logic
@@ -169,6 +182,14 @@ function bindSetupSubmit() {
   const startBtn = document.getElementById('start-interview-btn');
   if (startBtn) {
     startBtn.addEventListener('click', () => {
+      // Synchronously unlock browser SpeechSynthesis audio context under user interaction
+      if (window.speechSynthesis) {
+        try {
+          const dummy = new SpeechSynthesisUtterance('');
+          window.speechSynthesis.speak(dummy);
+        } catch (e) {}
+      }
+
       const typeSelect = document.getElementById('interview-type-select');
       if (typeSelect) {
         state.selectedType = typeSelect.value;
@@ -881,5 +902,25 @@ function updateSuccessRateStat() {
   } else {
     // Default believable starting success rate
     successEl.innerText = "85%";
+  }
+}
+
+function updateQuestionSliderCap() {
+  const rolePool = QUESTION_BANK[state.selectedRole];
+  if (!rolePool) return;
+  const typePool = rolePool[state.selectedType];
+  if (!typePool) return;
+  const questionsList = typePool[state.selectedDifficulty] || [];
+  const maxAvailable = questionsList.length;
+  
+  const qSlider = document.getElementById('question-limit-slider');
+  const qVal = document.getElementById('question-limit-val');
+  if (qSlider && qVal) {
+    qSlider.max = maxAvailable;
+    if (state.questionLimit > maxAvailable) {
+      state.questionLimit = maxAvailable;
+      qSlider.value = maxAvailable;
+      qVal.innerText = maxAvailable;
+    }
   }
 }

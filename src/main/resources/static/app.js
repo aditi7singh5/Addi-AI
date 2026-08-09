@@ -11,6 +11,9 @@ if (SpeechRecognition) {
   recognition.lang = 'en-US';
   
   recognition.onresult = (event) => {
+    if (!state || !state.currentSession || !state.currentSession.isRecording) {
+      return;
+    }
     let interimTranscript = '';
     for (let i = event.resultIndex; i < event.results.length; ++i) {
       if (event.results[i].isFinal) {

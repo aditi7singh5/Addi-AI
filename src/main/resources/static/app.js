@@ -210,6 +210,10 @@ function resetCurrentSession() {
   clearInterval(state.currentSession.recordingInterval);
   clearTimeout(state.currentSession.speakingTimeout);
   
+  if (window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+  }
+  
   if (recognition) {
     try {
       recognition.stop();
@@ -265,12 +269,44 @@ function loadQuestion(index) {
 
 function triggerAIInterviewerSpeech() {
   const avatarWrapper = document.getElementById('avatar-wrapper');
+  if (!avatarWrapper) return;
+  
   avatarWrapper.classList.add('speaking-active');
   
-  clearTimeout(state.currentSession.speakingTimeout);
-  state.currentSession.speakingTimeout = setTimeout(() => {
-    avatarWrapper.classList.remove('speaking-active');
-  }, 3500);
+  if (window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+    
+    const questionText = document.getElementById('q-body').innerText;
+    const utterance = new SpeechSynthesisUtterance(questionText);
+    
+    // Attempt to pick a high-quality Google or standard English voice
+    const voices = window.speechSynthesis.getVoices();
+    let selectedVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Natural')));
+    if (!selectedVoice) {
+      selectedVoice = voices.find(v => v.lang.startsWith('en'));
+    }
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
+    }
+    
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
+    
+    utterance.onend = () => {
+      avatarWrapper.classList.remove('speaking-active');
+    };
+    utterance.onerror = () => {
+      avatarWrapper.classList.remove('speaking-active');
+    };
+    
+    window.speechSynthesis.speak(utterance);
+  } else {
+    // Fallback static animation timer if browser does not support SpeechSynthesis
+    clearTimeout(state.currentSession.speakingTimeout);
+    state.currentSession.speakingTimeout = setTimeout(() => {
+      avatarWrapper.classList.remove('speaking-active');
+    }, 3500);
+  }
 }
 
 // Bind Simulator actions
@@ -446,6 +482,10 @@ function advanceQuestion() {
     state.currentSession.isRecording = false;
     document.getElementById('mic-wrapper').classList.remove('recording-active');
     document.getElementById('recording-status-text').innerText = 'Click to speak';
+    
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
     
     if (recognition) {
       try {

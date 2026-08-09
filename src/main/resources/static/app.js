@@ -3,42 +3,6 @@
 let recognition = null;
 let finalTranscript = '';
 
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-if (SpeechRecognition) {
-  recognition = new SpeechRecognition();
-  recognition.continuous = true;
-  recognition.interimResults = true;
-  recognition.lang = 'en-US';
-  
-  recognition.onresult = (event) => {
-    if (!state || !state.currentSession || !state.currentSession.isRecording) {
-      return;
-    }
-    let interimTranscript = '';
-    for (let i = event.resultIndex; i < event.results.length; ++i) {
-      if (event.results[i].isFinal) {
-        finalTranscript += event.results[i][0].transcript + ' ';
-      } else {
-        interimTranscript += event.results[i][0].transcript;
-      }
-    }
-    const transcriptPreview = document.getElementById('transcript-preview');
-    if (transcriptPreview) {
-      transcriptPreview.innerText = finalTranscript + interimTranscript;
-    }
-  };
-  
-  recognition.onend = () => {
-    if (state && state.currentSession && state.currentSession.isRecording) {
-      try {
-        recognition.start();
-      } catch (e) {
-        console.warn("SpeechRecognition auto-restart failed:", e);
-      }
-    }
-  };
-}
-
 let state = {
   activeScreen: 'landing-screen',
   selectedRole: 'software-engineer',
@@ -250,6 +214,7 @@ function resetCurrentSession() {
     try {
       recognition.stop();
     } catch (e) {}
+    recognition = null;
   }
   
   state.currentSession.questions = [];
@@ -353,8 +318,41 @@ function bindSimulatorActions() {
         currentVal = '';
       }
       
-      if (recognition) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        // Instantiate a brand new isolated capture session
+        recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+        
         finalTranscript = currentVal ? currentVal + ' ' : '';
+        
+        recognition.onresult = (event) => {
+          if (!state || !state.currentSession || !state.currentSession.isRecording) {
+            return;
+          }
+          let interimTranscript = '';
+          for (let i = event.resultIndex; i < event.results.length; ++i) {
+            if (event.results[i].isFinal) {
+              finalTranscript += event.results[i][0].transcript + ' ';
+            } else {
+              interimTranscript += event.results[i][0].transcript;
+            }
+          }
+          transcriptPreview.innerText = finalTranscript + interimTranscript;
+        };
+        
+        recognition.onend = () => {
+          if (state && state.currentSession && state.currentSession.isRecording && recognition) {
+            try {
+              recognition.start();
+            } catch (e) {
+              console.warn("SpeechRecognition auto-restart failed:", e);
+            }
+          }
+        };
+        
         try {
           recognition.start();
         } catch (e) {
@@ -385,6 +383,7 @@ function bindSimulatorActions() {
         try {
           recognition.stop();
         } catch (e) {}
+        recognition = null;
       } else {
         clearInterval(state.currentSession.recordingInterval);
       }
@@ -452,6 +451,7 @@ function advanceQuestion() {
       try {
         recognition.stop();
       } catch (e) {}
+      recognition = null;
     } else {
       clearInterval(state.currentSession.recordingInterval);
     }

@@ -2,6 +2,28 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <script>
+    window.onerror = function(message, source, lineno, colno, error) {
+      const errorDiv = document.createElement('div');
+      errorDiv.style.position = 'fixed';
+      errorDiv.style.top = '0';
+      errorDiv.style.left = '0';
+      errorDiv.style.width = '100%';
+      errorDiv.style.background = '#ff3333';
+      errorDiv.style.color = '#ffffff';
+      errorDiv.style.padding = '20px';
+      errorDiv.style.zIndex = '999999';
+      errorDiv.style.fontFamily = 'monospace';
+      errorDiv.style.fontSize = '14px';
+      errorDiv.style.lineHeight = '1.6';
+      errorDiv.style.whiteSpace = 'pre-wrap';
+      errorDiv.innerHTML = '<strong>Addi AI Runtime Error:</strong><br>' + 
+                            message + '<br>in ' + source + ' at line ' + lineno + ':' + colno + 
+                            (error && error.stack ? '<br><br>Stack Trace:<br>' + error.stack : '');
+      document.body.appendChild(errorDiv);
+      return false;
+    };
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Addi AI - Premium AI Interview Simulator</title>
   <!-- SEO Meta Tags -->

@@ -1,0 +1,18 @@
+# Maven Compilation Target
+target/
+*.class
+
+# Log files
+*.log
+*.log.*
+
+# IDE Configurations
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+dependency-reduced-pom.xml
+
+# Sensitive Configuration Properties (Contains Gemini API Key)
+src/main/resources/application.properties

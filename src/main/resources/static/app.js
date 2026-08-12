@@ -308,6 +308,16 @@ function triggerAIInterviewerSpeech() {
     window.speechSynthesis.cancel();
     
     const textToSpeak = state.currentSession.currentTransitionSpeech || document.getElementById('q-body').innerText;
+    
+    const bubble = document.getElementById('ai-speech-bubble');
+    const bubbleText = document.getElementById('ai-speech-text');
+    if (bubble && bubbleText && state.currentSession.currentTransitionSpeech) {
+      bubbleText.innerText = state.currentSession.currentTransitionSpeech;
+      bubble.style.display = 'block';
+    } else if (bubble) {
+      bubble.style.display = 'none';
+    }
+    
     state.currentSession.currentTransitionSpeech = null;
     
     const utterance = new SpeechSynthesisUtterance(textToSpeak);
@@ -327,9 +337,11 @@ function triggerAIInterviewerSpeech() {
     
     utterance.onend = () => {
       avatarWrapper.classList.remove('speaking-active');
+      if (bubble) bubble.style.display = 'none';
     };
     utterance.onerror = () => {
       avatarWrapper.classList.remove('speaking-active');
+      if (bubble) bubble.style.display = 'none';
     };
     
     window.speechSynthesis.speak(utterance);

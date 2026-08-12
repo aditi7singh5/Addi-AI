@@ -508,8 +508,27 @@ function bindSimulatorActions() {
   });
 }
 
+function stopVoiceRecording() {
+  state.currentSession.isRecording = false;
+  document.getElementById('mic-wrapper').classList.remove('recording-active');
+  document.getElementById('recording-status-text').innerText = 'Click to speak';
+  
+  if (window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+  }
+  
+  if (recognition) {
+    try { recognition.stop(); } catch (e) {}
+    recognition = null;
+  } else {
+    clearInterval(state.currentSession.recordingInterval);
+  }
+}
+
 function submitCurrentAnswer() {
-  clearTimeout(state.currentSession.silenceTimeout);
+  if (state.currentSession.isFetchingTransition) return;
+  stopVoiceRecording();
+
   const activeMode = document.querySelector('.mode-btn.active').getAttribute('data-mode');
   let answerText = "";
   
@@ -549,6 +568,8 @@ function fetchTransitionAndAdvance(answerText) {
     }
     if (skipBtn) skipBtn.disabled = true;
 
+    state.currentSession.isFetchingTransition = true;
+
     fetch('/api/interact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -563,6 +584,7 @@ function fetchTransitionAndAdvance(answerText) {
         return res.text();
       })
       .then(transitionText => {
+        state.currentSession.isFetchingTransition = false;
         state.currentSession.currentTransitionSpeech = transitionText;
         if (submitBtn) {
           submitBtn.disabled = false;
@@ -573,6 +595,7 @@ function fetchTransitionAndAdvance(answerText) {
       })
       .catch(err => {
         console.warn("Interact API failed, falling back to standard transition:", err);
+        state.currentSession.isFetchingTransition = false;
         state.currentSession.currentTransitionSpeech = `Got it. Let's move on to the next question. ${nextQ}`;
         if (submitBtn) {
           submitBtn.disabled = false;
@@ -601,25 +624,7 @@ function saveAnswer(text) {
 }
 
 function advanceQuestion() {
-  if (state.currentSession.isRecording) {
-    state.currentSession.isRecording = false;
-    document.getElementById('mic-wrapper').classList.remove('recording-active');
-    document.getElementById('recording-status-text').innerText = 'Click to speak';
-    
-    if (window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-    }
-    
-    if (recognition) {
-      try {
-        recognition.stop();
-      } catch (e) {}
-      recognition = null;
-    } else {
-      clearInterval(state.currentSession.recordingInterval);
-    }
-  }
-  
+  stopVoiceRecording();
   state.currentSession.currentIndex++;
   
   if (state.currentSession.currentIndex < state.currentSession.questions.length) {

@@ -523,17 +523,116 @@ function bindSimulatorActions() {
   });
 }
 
-function stopVoiceRecording() {
-  state.currentSession.isRecording = false;
-  document.getElementById('mic-wrapper').classList.remove('recording-active');
-  document.getElementById('recording-status-text').innerText = 'Click to speak';
+function startVoiceRecording() {
+  if (state.currentSession.isRecording || state.currentSession.isFetchingTransition) return;
+
+  const micWrapper = document.getElementById('mic-wrapper');
+  const statusText = document.getElementById('recording-status-text');
+  const transcriptPreview = document.getElementById('transcript-preview');
+
+  state.currentSession.isRecording = true;
+  if (micWrapper) micWrapper.classList.add('recording-active');
+  if (statusText) statusText.innerText = 'Recording... click to pause';
   
-  if (window.speechSynthesis) {
-    window.speechSynthesis.cancel();
+  let currentVal = transcriptPreview ? transcriptPreview.innerText : '';
+  if (currentVal === 'Your spoken response will appear here...') {
+    currentVal = '';
   }
   
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SpeechRecognition) {
+    recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+    
+    finalTranscript = currentVal ? currentVal + ' ' : '';
+    
+    recognition.onresult = (event) => {
+      if (!state || !state.currentSession || !state.currentSession.isRecording) {
+        return;
+      }
+      let interimTranscript = '';
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript + ' ';
+        } else {
+          interimTranscript += event.results[i][0].transcript;
+        }
+      }
+      if (transcriptPreview) {
+        transcriptPreview.innerText = finalTranscript + interimTranscript;
+      }
+      
+      if (state.simulationMode === 'interactive') {
+        clearTimeout(state.currentSession.silenceTimeout);
+        state.currentSession.silenceTimeout = setTimeout(() => {
+          const textVal = transcriptPreview ? transcriptPreview.innerText.trim() : '';
+          if (textVal && textVal !== 'Your spoken response will appear here...') {
+            console.log("2s silence detected, auto-submitting...");
+            submitCurrentAnswer();
+          }
+        }, 2000);
+      }
+    };
+    
+    recognition.onend = () => {
+      if (state && state.currentSession && state.currentSession.isRecording && recognition) {
+        try {
+          recognition.start();
+        } catch (e) {
+          console.warn("SpeechRecognition auto-restart failed:", e);
+        }
+      }
+    };
+    
+    try {
+      recognition.start();
+    } catch (e) {
+      console.warn("SpeechRecognition start failed:", e);
+    }
+  } else {
+    let textBuffer = currentVal;
+    let phraseIndex = 0;
+    const phrases = VOICE_SIMULATION_FRAGMENTS[state.selectedRole] || VOICE_SIMULATION_FRAGMENTS["software-engineer"];
+    
+    clearInterval(state.currentSession.recordingInterval);
+    state.currentSession.recordingInterval = setInterval(() => {
+      if (phraseIndex < phrases.length) {
+        textBuffer += (textBuffer ? " " : "") + phrases[phraseIndex];
+        if (transcriptPreview) {
+          transcriptPreview.innerText = textBuffer;
+        }
+        phraseIndex++;
+        
+        if (state.simulationMode === 'interactive' && phraseIndex === phrases.length) {
+          clearTimeout(state.currentSession.silenceTimeout);
+          state.currentSession.silenceTimeout = setTimeout(() => {
+            submitCurrentAnswer();
+          }, 2000);
+        }
+      } else {
+        clearInterval(state.currentSession.recordingInterval);
+      }
+    }, 3000);
+  }
+}
+
+function stopVoiceRecording() {
+  state.currentSession.isRecording = false;
+  clearTimeout(state.currentSession.silenceTimeout);
+  state.currentSession.silenceTimeout = null;
+
+  const micWrapper = document.getElementById('mic-wrapper');
+  const statusText = document.getElementById('recording-status-text');
+  
+  if (micWrapper) micWrapper.classList.remove('recording-active');
+  if (statusText) statusText.innerText = 'Click to resume recording';
+  
   if (recognition) {
-    try { recognition.stop(); } catch (e) {}
+    try {
+      recognition.stop();
+    } catch (e) {}
     recognition = null;
   } else {
     clearInterval(state.currentSession.recordingInterval);

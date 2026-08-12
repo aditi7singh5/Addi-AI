@@ -350,10 +350,20 @@ function triggerAIInterviewerSpeech() {
     utterance.onend = () => {
       avatarWrapper.classList.remove('speaking-active');
       if (bubble) bubble.style.display = 'none';
+      
+      const activeMode = document.querySelector('.mode-btn.active');
+      if (state.simulationMode === 'interactive' && activeMode && activeMode.getAttribute('data-mode') === 'voice') {
+        startVoiceRecording();
+      }
     };
     utterance.onerror = () => {
       avatarWrapper.classList.remove('speaking-active');
       if (bubble) bubble.style.display = 'none';
+      
+      const activeMode = document.querySelector('.mode-btn.active');
+      if (state.simulationMode === 'interactive' && activeMode && activeMode.getAttribute('data-mode') === 'voice') {
+        startVoiceRecording();
+      }
     };
     
     window.speechSynthesis.speak(utterance);
@@ -362,6 +372,11 @@ function triggerAIInterviewerSpeech() {
     clearTimeout(state.currentSession.speakingTimeout);
     state.currentSession.speakingTimeout = setTimeout(() => {
       avatarWrapper.classList.remove('speaking-active');
+      
+      const activeMode = document.querySelector('.mode-btn.active');
+      if (state.simulationMode === 'interactive' && activeMode && activeMode.getAttribute('data-mode') === 'voice') {
+        startVoiceRecording();
+      }
     }, 3500);
   }
 }

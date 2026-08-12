@@ -440,10 +440,10 @@ function bindSimulatorActions() {
             state.currentSession.silenceTimeout = setTimeout(() => {
               const textVal = transcriptPreview.innerText.trim();
               if (textVal && textVal !== 'Your spoken response will appear here...') {
-                console.log("3s silence detected, auto-submitting...");
+                console.log("2s silence detected, auto-submitting...");
                 submitCurrentAnswer();
               }
-            }, 3000);
+            }, 2000);
           }
         };
         

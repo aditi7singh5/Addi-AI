@@ -231,4 +231,55 @@ public class AssessmentService {
     private int getSubScore(int baseScore, float scale) {
         return Math.min(100, Math.round(baseScore * scale));
     }
+
+    public String getTransition(String question, String userAnswer, String nextQuestion) {
+        if (apiKey == null || apiKey.trim().isEmpty() || userAnswer == null || userAnswer.trim().isEmpty()) {
+            return "Got it. Let's move on: " + nextQuestion;
+        }
+
+        try {
+            String prompt = "You are a professional, friendly AI interviewer. The candidate just answered this question:\n" +
+                    "\"" + question + "\"\n" +
+                    "with this response:\n" +
+                    "\"" + userAnswer + "\"\n\n" +
+                    "Provide a short, natural, 1-sentence response reacting briefly to their answer and transitioning to the next question:\n" +
+                    "\"" + nextQuestion + "\"\n\n" +
+                    "Guidelines:\n" +
+                    "- Keep it under 20 words.\n" +
+                    "- Do not say 'Candidate' or 'Question'. Speak directly to the candidate.\n" +
+                    "- Return ONLY the transition phrase. No JSON, no markdown, no quotes.";
+
+            Map<String, Object> requestBody = new HashMap<>();
+            List<Map<String, Object>> contents = new ArrayList<>();
+            Map<String, Object> contentMap = new HashMap<>();
+            List<Map<String, Object>> parts = new ArrayList<>();
+            Map<String, Object> partMap = new HashMap<>();
+            partMap.put("text", prompt);
+            parts.add(partMap);
+            contentMap.put("parts", parts);
+            contents.add(contentMap);
+            requestBody.put("contents", contents);
+
+            String url = apiUrl + "?key=" + apiKey;
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+
+            ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                JsonNode root = objectMapper.readTree(response.getBody());
+                JsonNode partNode = root.path("candidates").get(0).path("content").path("parts").get(0);
+                String transition = partNode.path("text").asText().trim();
+                // Strip surrounding double quotes if any
+                if (transition.startsWith("\"") && transition.endsWith("\"")) {
+                    transition = transition.substring(1, transition.length() - 1);
+                }
+                return transition;
+            }
+        } catch (Exception e) {
+            System.err.println("Gemini transition generation failed: " + e.getMessage());
+        }
+
+        return "Got it. Let's move on: " + nextQuestion;
+    }
 }

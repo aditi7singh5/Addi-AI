@@ -44,6 +44,15 @@ public class InterviewController {
         );
     }
 
+    @PostMapping("/interact")
+    public String interact(@RequestBody InteractionRequest request) {
+        return assessmentService.getTransition(
+                request.getQuestion(),
+                request.getUserAnswer(),
+                request.getNextQuestion()
+        );
+    }
+
     @GetMapping("/history")
     public List<Report> getHistory() {
         return assessmentService.getHistory();
@@ -72,5 +81,20 @@ public class InterviewController {
 
         public List<Answer> getAnswers() { return answers; }
         public void setAnswers(List<Answer> answers) { this.answers = answers; }
+    }
+
+    public static class InteractionRequest {
+        private String question;
+        private String userAnswer;
+        private String nextQuestion;
+
+        public String getQuestion() { return question; }
+        public void setQuestion(String question) { this.question = question; }
+
+        public String getUserAnswer() { return userAnswer; }
+        public void setUserAnswer(String userAnswer) { this.userAnswer = userAnswer; }
+
+        public String getNextQuestion() { return nextQuestion; }
+        public void setNextQuestion(String nextQuestion) { this.nextQuestion = nextQuestion; }
     }
 }

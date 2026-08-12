@@ -307,8 +307,10 @@ function triggerAIInterviewerSpeech() {
   if (window.speechSynthesis) {
     window.speechSynthesis.cancel();
     
-    const questionText = document.getElementById('q-body').innerText;
-    const utterance = new SpeechSynthesisUtterance(questionText);
+    const textToSpeak = state.currentSession.currentTransitionSpeech || document.getElementById('q-body').innerText;
+    state.currentSession.currentTransitionSpeech = null;
+    
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
     
     // Attempt to pick a high-quality Google or standard English voice
     const voices = window.speechSynthesis.getVoices();
@@ -492,7 +494,60 @@ function submitCurrentAnswer() {
   }
   
   saveAnswer(answerText);
-  advanceQuestion();
+  fetchTransitionAndAdvance(answerText);
+}
+
+function fetchTransitionAndAdvance(answerText) {
+  const currentIdx = state.currentSession.currentIndex;
+  const nextIdx = currentIdx + 1;
+  
+  if (nextIdx < state.currentSession.questions.length) {
+    const currentQ = state.currentSession.questions[currentIdx].question;
+    const nextQ = state.currentSession.questions[nextIdx].question;
+    
+    const submitBtn = document.getElementById('submit-answer-btn');
+    const skipBtn = document.getElementById('skip-question-btn');
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `Analyzing <i class="fas fa-spinner fa-spin"></i>`;
+    }
+    if (skipBtn) skipBtn.disabled = true;
+
+    fetch('/api/interact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        question: currentQ,
+        userAnswer: answerText,
+        nextQuestion: nextQ
+      })
+    })
+      .then(res => {
+        if (!res.ok) throw new Error("API failed");
+        return res.text();
+      })
+      .then(transitionText => {
+        state.currentSession.currentTransitionSpeech = transitionText;
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = `Submit Response <i class="fas fa-arrow-right"></i>`;
+        }
+        if (skipBtn) skipBtn.disabled = false;
+        advanceQuestion();
+      })
+      .catch(err => {
+        console.warn("Interact API failed, falling back to standard transition:", err);
+        state.currentSession.currentTransitionSpeech = `Got it. Let's move on to the next question. ${nextQ}`;
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = `Submit Response <i class="fas fa-arrow-right"></i>`;
+        }
+        if (skipBtn) skipBtn.disabled = false;
+        advanceQuestion();
+      });
+  } else {
+    advanceQuestion();
+  }
 }
 
 function saveAnswer(text) {

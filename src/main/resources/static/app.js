@@ -19,6 +19,7 @@ let state = {
   selectedDifficulty: 'mid',
   selectedType: 'behavioral',
   questionLimit: 3,
+  simulationMode: 'relaxed',
   
   // Current Interview Session
   currentSession: {
@@ -29,7 +30,8 @@ let state = {
     secondsElapsed: 0,
     isRecording: false,
     recordingInterval: null,
-    speakingTimeout: null
+    speakingTimeout: null,
+    silenceTimeout: null
   },
   
   // History fetched from backend
@@ -166,6 +168,15 @@ function initSetupOptions() {
     });
   });
 
+  const modeCards = document.querySelectorAll('#simulation-mode-selection .option-card');
+  modeCards.forEach(card => {
+    card.addEventListener('click', () => {
+      modeCards.forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      state.simulationMode = card.getAttribute('data-value');
+    });
+  });
+
   const typeSelect = document.getElementById('interview-type-select');
   if (typeSelect) {
     typeSelect.addEventListener('change', (e) => {
@@ -240,6 +251,7 @@ function resetCurrentSession() {
   clearInterval(state.currentSession.timerInterval);
   clearInterval(state.currentSession.recordingInterval);
   clearTimeout(state.currentSession.speakingTimeout);
+  clearTimeout(state.currentSession.silenceTimeout);
   
   if (window.speechSynthesis) {
     window.speechSynthesis.cancel();
@@ -422,6 +434,17 @@ function bindSimulatorActions() {
             }
           }
           transcriptPreview.innerText = finalTranscript + interimTranscript;
+          
+          if (state.simulationMode === 'interactive') {
+            clearTimeout(state.currentSession.silenceTimeout);
+            state.currentSession.silenceTimeout = setTimeout(() => {
+              const textVal = transcriptPreview.innerText.trim();
+              if (textVal && textVal !== 'Your spoken response will appear here...') {
+                console.log("3s silence detected, auto-submitting...");
+                submitCurrentAnswer();
+              }
+            }, 3000);
+          }
         };
         
         recognition.onend = () => {
@@ -486,6 +509,7 @@ function bindSimulatorActions() {
 }
 
 function submitCurrentAnswer() {
+  clearTimeout(state.currentSession.silenceTimeout);
   const activeMode = document.querySelector('.mode-btn.active').getAttribute('data-mode');
   let answerText = "";
   

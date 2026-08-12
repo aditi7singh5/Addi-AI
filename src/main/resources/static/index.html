@@ -32,7 +32,7 @@
   
   <!-- FontAwesome Icons & Stylesheets -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="style.css?v=10">
+  <link rel="stylesheet" href="style.css?v=11">
 </head>
 <body>
 
@@ -189,6 +189,21 @@
                   <option value="system-design">Architecture / System Design</option>
                   <option value="mixed">Mixed Focus (All Areas)</option>
                 </select>
+              </div>
+            </div>
+
+            <!-- Simulation Mode Selection -->
+            <div class="form-group">
+              <label><i class="fas fa-magic"></i> Simulation Mode</label>
+              <div class="options-grid" id="simulation-mode-selection" style="grid-template-columns: repeat(2, 1fr); gap: 0.75rem;">
+                <div class="option-card selected" data-value="relaxed" id="mode-relaxed">
+                  <i class="fas fa-couch"></i>
+                  <span>Relaxed (Manual)</span>
+                </div>
+                <div class="option-card" data-value="interactive" id="mode-interactive">
+                  <i class="fas fa-bolt"></i>
+                  <span>Interactive (Auto)</span>
+                </div>
               </div>
             </div>
 
@@ -502,7 +517,7 @@
   </footer>
 
   <!-- Scripts -->
-  <script src="questions.js?v=10"></script>
-  <script src="app.js?v=10"></script>
+  <script src="questions.js?v=11"></script>
+  <script src="app.js?v=11"></script>
 </body>
 </html>

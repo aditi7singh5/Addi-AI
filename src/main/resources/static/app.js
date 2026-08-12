@@ -750,16 +750,34 @@ function bindReportActions() {
 function startLocalInterview() {
   const rolePool = QUESTION_BANK[state.selectedRole];
   if (!rolePool) return;
-  const typePool = rolePool[state.selectedType];
-  if (!typePool) return;
-  let questionsList = typePool[state.selectedDifficulty] || [];
+  
+  let questionsList = [];
+  if (state.selectedType === 'mixed') {
+    Object.keys(rolePool).forEach(t => {
+      const list = rolePool[t][state.selectedDifficulty] || [];
+      questionsList = questionsList.concat(list);
+    });
+  } else {
+    const typePool = rolePool[state.selectedType];
+    if (typePool) {
+      questionsList = typePool[state.selectedDifficulty] || [];
+    }
+  }
+
   if (questionsList.length === 0) {
     alert("No questions found for this configuration.");
     return;
   }
-  questionsList = [...questionsList].sort(() => 0.5 - Math.random());
-  const actualLimit = Math.min(state.questionLimit, questionsList.length);
-  state.currentSession.questions = questionsList.slice(0, actualLimit);
+  
+  // Shuffle
+  let shuffled = [...questionsList].sort(() => 0.5 - Math.random());
+  
+  // Cycle/repeat to match requested limit if necessary
+  let result = [];
+  while (result.length < state.questionLimit) {
+    result = result.concat(shuffled);
+  }
+  state.currentSession.questions = result.slice(0, state.questionLimit);
   state.currentSession.currentIndex = 0;
   state.currentSession.answers = [];
   state.currentSession.secondsElapsed = 0;
@@ -917,21 +935,8 @@ function updateSuccessRateStat() {
 }
 
 function updateQuestionSliderCap() {
-  const rolePool = QUESTION_BANK[state.selectedRole];
-  if (!rolePool) return;
-  const typePool = rolePool[state.selectedType];
-  if (!typePool) return;
-  const questionsList = typePool[state.selectedDifficulty] || [];
-  const maxAvailable = questionsList.length;
-  
   const qSlider = document.getElementById('question-limit-slider');
-  const qVal = document.getElementById('question-limit-val');
-  if (qSlider && qVal) {
-    qSlider.max = maxAvailable;
-    if (state.questionLimit > maxAvailable) {
-      state.questionLimit = maxAvailable;
-      qSlider.value = maxAvailable;
-      qVal.innerText = maxAvailable;
-    }
+  if (qSlider) {
+    qSlider.max = 25;
   }
 }

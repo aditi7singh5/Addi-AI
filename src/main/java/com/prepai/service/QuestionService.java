@@ -1168,19 +1168,38 @@ public class QuestionService {
         Map<String, Map<String, List<Question>>> rolePool = questionBank.get(role);
         if (rolePool == null) return Collections.emptyList();
 
-        Map<String, List<Question>> typePool = rolePool.get(type);
-        if (typePool == null) return Collections.emptyList();
+        List<Question> questionsList = new ArrayList<>();
+        if ("mixed".equals(type)) {
+            for (String t : rolePool.keySet()) {
+                Map<String, List<Question>> typePool = rolePool.get(t);
+                if (typePool != null) {
+                    List<Question> list = typePool.get(difficulty);
+                    if (list != null) {
+                        questionsList.addAll(list);
+                    }
+                }
+            }
+        } else {
+            Map<String, List<Question>> typePool = rolePool.get(type);
+            if (typePool != null) {
+                List<Question> list = typePool.get(difficulty);
+                if (list != null) {
+                    questionsList.addAll(list);
+                }
+            }
+        }
 
-        List<Question> list = typePool.get(difficulty);
-        if (list == null || list.isEmpty()) return Collections.emptyList();
+        if (questionsList.isEmpty()) return Collections.emptyList();
 
         // Copy and shuffle
-        List<Question> shuffled = new ArrayList<>(list);
+        List<Question> shuffled = new ArrayList<>(questionsList);
         Collections.shuffle(shuffled);
 
-        if (limit > shuffled.size()) {
-            return shuffled;
+        // Cycle/repeat to match requested limit if necessary
+        List<Question> result = new ArrayList<>();
+        while (result.size() < limit) {
+            result.addAll(shuffled);
         }
-        return shuffled.subList(0, limit);
+        return result.subList(0, limit);
     }
 }

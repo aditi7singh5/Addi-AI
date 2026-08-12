@@ -498,6 +498,7 @@ function submitCurrentAnswer() {
 function saveAnswer(text) {
   const currentIdx = state.currentSession.currentIndex;
   const question = state.currentSession.questions[currentIdx];
+  if (!question) return;
   
   state.currentSession.answers.push({
     questionId: question.id,
